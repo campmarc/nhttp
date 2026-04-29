@@ -162,18 +162,18 @@ const generateHTML = (
     : favIconHtml;
   const htmlWithCustomCss = _htmlTplString
     .toString()
-    .replace("<% customCss %>", customCss);
+    .replace("<% customCss %>", () => customCss);
   const htmlWithFavIcon = htmlWithCustomCss.replace(
     "<% favIconString %>",
-    favIconString,
+    () => favIconString,
   );
   const htmlWithCustomJs = htmlWithFavIcon.replace(
     "<% customJs %>",
-    customJs ? `<script src="${customJs}"></script>` : "",
+    () => customJs ? `<script src="${customJs}"></script>` : "",
   );
   const htmlWithCustomCssUrl = htmlWithCustomJs.replace(
     "<% customCssUrl %>",
-    customCssUrl ? `<link href="${customCssUrl}" rel="stylesheet">` : "",
+    () => customCssUrl ? `<link href="${customCssUrl}" rel="stylesheet">` : "",
   );
 
   const initOptions = {
@@ -184,8 +184,8 @@ const generateHTML = (
   };
   swaggerInit = _jsTplString
     .toString()
-    .replace("<% swaggerOptions %>", stringify(initOptions));
-  return htmlWithCustomCssUrl.replace("<% title %>", customSiteTitle);
+    .replace("<% swaggerOptions %>", () => stringify(initOptions));
+  return htmlWithCustomCssUrl.replace("<% title %>", () => customSiteTitle);
 };
 /**
  * setup swagger UI.
@@ -194,13 +194,13 @@ const setup = (swaggerDoc: TObject, opts: GenHtmlOpts = {}): Handler => {
   let html = generateHTML(swaggerDoc, opts);
   html = html.replaceAll(
     "<% url_lib_swagger %>",
-    opts.baseUrlLibSwagger ? opts.baseUrlLibSwagger : base_lib_swagger,
+    () => opts.baseUrlLibSwagger || base_lib_swagger,
   );
 
   return ({ response, path }) => {
-    const relativeHtml = html.replaceAll(
+    const relativeHtml = html.replace(
       "<% base %>",
-      path.replace(/\/+$/, ""),
+      () => path.replace(/\/+$/, ""),
     );
     response.type("html");
     return relativeHtml;

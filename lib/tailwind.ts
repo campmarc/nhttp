@@ -195,7 +195,7 @@ export const tailwind = async (
         new Response(
           text.replace(
             "</head>",
-            `<link rel="stylesheet" href="${path}"></head>`,
+            () => `<link rel="stylesheet" href="${path}"></head>`,
           ),
           {
             headers: clone.headers,
